@@ -1,0 +1,46 @@
+.actor{
+  background-image: url(images/turkey.gif);
+  background-size: cover;
+  width: 5vw;
+  height: 5vw;
+  position: absolute;
+  background-color: red;
+}
+#game_container{
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  background-color: lavender;
+}
+#game_container{
+  cursor: url(images/crosshairs.png) 25 25, crosshairs;
+}
+#messages{
+  height: 50vh;
+  width: 50vw;
+  border: 2px black inset;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  display: none;
+  z-index: 201;
+}
+.holder{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.backdrop{
+  z-index: 200;
+  background-color: black;
+  opacity: .7;
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100vw;
+  height: 100vh;
+}
