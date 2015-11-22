@@ -1,8 +1,8 @@
 var the_game = null;
-$(document).ready(function(){
-  the_game = new game_template($('#game_container'));
-  the_game.register_message_display($('#messages'));
-});
+
+the_game = new game_template($('#game_container'));
+the_game.register_message_display($('#messages'));
+
 
 var game_template = function(container){
 	var self=this;
@@ -38,7 +38,7 @@ var game_template = function(container){
 		return self.accuracy;
 	};
 	self.calculate_accuracy = function(){
-		var accuracy = self.stats.hits / self.stats.shots;
+		var accuracy =  self.stats.shots / self.stats.hits;
 		return accuracy;
 	};
 	self.create_sound_players = function(){
@@ -93,7 +93,7 @@ var game_template = function(container){
 	};
 	self.play_gunshot = function(){
 		var index=0;
-		while(index<self.audio_sources_max && !self.audio_sources[index].paused ){ 		
+		while(!self.audio_sources[index].paused ){ 		
 			index++;
 		}
 		if(index<self.audio_sources_max){
@@ -137,7 +137,7 @@ var stats_template = function(stats_container, game){
 	}
 	self.update_stats = function(){
 		self.remaining_text.text(game.get_actor_count());
-		self.accuracy_text.text((game.get_accuracy()*100).toFixed(2)+'%');		
+		self.accuracy_text.text(game.get_accuracy()*100+'%');		
 	}
 	self.init();
 	return self;
@@ -157,7 +157,7 @@ var actor_template = function(parent, container,index){
 	self.distance_to_move = null;
 	self.index=index;
 
-	self.calculate_new_heartbeat = function(){
+	self.calculate_new_heartbeat = function(){}
 		self.heartbeat_delta = Math.floor(Math.random()*self.heartbeat_variance_range*2)-self.heartbeat_variance_range;
 		return self.heartbeat_delta;
 	};
@@ -197,11 +197,11 @@ var actor_template = function(parent, container,index){
 		  x_shift = 1;
 		}
 		else if(current_position.left + self.distance_to_move > self.container.width()){
-		  x_shift = -1;
+		  x_shift = 1;
 		}
 		if(current_position.top - self.distance_to_move < 0){
 		  y_shift = 1;
-		}
+		
 		else if(current_position.top + self.distance_to_move > self.container.height()){
 		  y_shift = -1;
 		}
@@ -213,7 +213,7 @@ var actor_template = function(parent, container,index){
 	self.clicked = function(){
 		self.add_hit();
 		self.hit_sound();
-		self.die();
+
 	};
 	self.add_hit = function(){
 		self.parent.add_hit();
@@ -230,8 +230,8 @@ var actor_template = function(parent, container,index){
 		setTimeout(self.full_delete,1000);
 	};
 	self.full_delete = function(){
-		self.element.remove();
-		self.parent.remove_actor(self);
+		this.element.remove();
+		this.parent.remove_actor(self);
 		delete self;
 	};
 	self.move = function(){
