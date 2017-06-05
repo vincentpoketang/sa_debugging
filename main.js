@@ -11,7 +11,7 @@ function game_template(container){
 	self.remaining_actors = self.actor_count;
 	self.game_container = container;
 	self.audio_sources = [];
-	self.audio_sources_max = 10;
+	self.audio_sources_max = 5;
 	self.message_container = null;
 	self.message_text = null;
 	self.backdrop = null;
@@ -93,7 +93,7 @@ function game_template(container){
 	};
 	self.play_gunshot = function(){
 		var index=0;
-		while(!self.audio_sources[index].paused ){ 		
+		while(self.audio_sources[index] !== 'undefined' && !self.audio_sources[index].paused ){ 		
 			index++;
 		}
 		if(index<self.audio_sources_max){
