@@ -11,7 +11,7 @@
   height: 100vh;
   width: 100vw;
   background-color: lavender;
-  cursor: url(images/crosshairs.png) 25 25, crosshairs;
+  cursor: url(images/crosshairs.png) 25 25, crosshair;
 }
 #game_container > .actor{
   z-index: 1;
@@ -46,7 +46,7 @@
   height: 100vh;
 }
 #stats{
-  border: 2px single black;
+  border: 2px solid black;
   background: green;
   height: 10vh;
   width: 100vw;

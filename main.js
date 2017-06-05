@@ -1,17 +1,17 @@
-var the_game = null;
+$(document).ready(function(){
+	var the_game = null;
+	the_game = new game_template($('#game_container'));
+	the_game.register_message_display($('#messages'));
+});
 
-the_game = new game_template($('#game_container'));
-the_game.register_message_display($('#messages'));
-
-
-var game_template = function(container){
+function game_template(container){
 	var self=this;
 	self.actors = [];
 	self.actor_count = 10;
 	self.remaining_actors = self.actor_count;
 	self.game_container = container;
 	self.audio_sources = [];
-	self.audio_sources_max = 5;
+	self.audio_sources_max = 10;
 	self.message_container = null;
 	self.message_text = null;
 	self.backdrop = null;
@@ -23,7 +23,7 @@ var game_template = function(container){
 	};
 	self.init = function(){
 		for(var i=0; i<self.actor_count;i++){
-		  var actor = new actor_template(self, container,i);
+		  var actor = new actor_template(self, self.game_container,i);
 		  self.actors.push(actor);
 		}
 		self.create_sound_players();
@@ -38,7 +38,7 @@ var game_template = function(container){
 		return self.accuracy;
 	};
 	self.calculate_accuracy = function(){
-		var accuracy =  self.stats.shots / self.stats.hits;
+		var accuracy =  self.stats.hits/self.stats.shots;
 		return accuracy;
 	};
 	self.create_sound_players = function(){
@@ -71,7 +71,7 @@ var game_template = function(container){
 		}
 	};
 	self.game_over = function(){
-		self.display_message('You won!<br>Accuracy: %'+(self.calculate_accuracy()*100));
+		self.display_message('You won!<br>Accuracy: %'+(Math.round(parseInt(self.calculate_accuracy()*100))));
 	};
 	self.register_click_handler = function(){
 		self.game_container.click(self.clicked);
@@ -126,7 +126,7 @@ var game_template = function(container){
 	return self;
 };
 
-var stats_template = function(stats_container, game){
+function stats_template(stats_container, game){
 	var self=this;
 	self.stats_container = $(stats_container);
 	self.remaining_text = self.stats_container.find('.remaining > span');
@@ -137,13 +137,13 @@ var stats_template = function(stats_container, game){
 	}
 	self.update_stats = function(){
 		self.remaining_text.text(game.get_actor_count());
-		self.accuracy_text.text(game.get_accuracy()*100+'%');		
+		self.accuracy_text.text(Math.round(parseInt(game.get_accuracy()*100))+'%');		
 	}
 	self.init();
 	return self;
 }
 
-var actor_template = function(parent, container,index){
+function actor_template(parent, container,index){
 	var self=this;
 	self.parent = parent;
 	self.element = null;
@@ -157,7 +157,7 @@ var actor_template = function(parent, container,index){
 	self.distance_to_move = null;
 	self.index=index;
 
-	self.calculate_new_heartbeat = function(){}
+	self.calculate_new_heartbeat = function(){
 		self.heartbeat_delta = Math.floor(Math.random()*self.heartbeat_variance_range*2)-self.heartbeat_variance_range;
 		return self.heartbeat_delta;
 	};
@@ -178,7 +178,7 @@ var actor_template = function(parent, container,index){
 		return self.element;
 		};
 		self.place_self = function(){
-		self.container = $(container);
+		self.container = $(self.container);
 		var x = Math.floor(Math.random()*(self.container.width() - self.element.width()));
 		var y = Math.floor(Math.random()*(self.container.height() - self.element.height()));
 
@@ -197,11 +197,11 @@ var actor_template = function(parent, container,index){
 		  x_shift = 1;
 		}
 		else if(current_position.left + self.distance_to_move > self.container.width()){
-		  x_shift = 1;
+		  x_shift = -1;
 		}
 		if(current_position.top - self.distance_to_move < 0){
 		  y_shift = 1;
-		
+		}
 		else if(current_position.top + self.distance_to_move > self.container.height()){
 		  y_shift = -1;
 		}
@@ -213,7 +213,7 @@ var actor_template = function(parent, container,index){
 	self.clicked = function(){
 		self.add_hit();
 		self.hit_sound();
-
+		self.die();
 	};
 	self.add_hit = function(){
 		self.parent.add_hit();
@@ -230,8 +230,8 @@ var actor_template = function(parent, container,index){
 		setTimeout(self.full_delete,1000);
 	};
 	self.full_delete = function(){
-		this.element.remove();
-		this.parent.remove_actor(self);
+		self.element.remove();
+		self.parent.remove_actor(self);
 		delete self;
 	};
 	self.move = function(){
